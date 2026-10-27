@@ -56,6 +56,7 @@ def main():
 
     except APIStatusError as error:
         print(f"API error: HTTP {error.status_code}")
+        print(f"Details: {error.message}")
         raise SystemExit(1)
 
 
