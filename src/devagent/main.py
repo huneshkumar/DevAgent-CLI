@@ -1,7 +1,12 @@
-
 import argparse
 
 from dotenv import load_dotenv
+from openai import (
+    APIConnectionError,
+    APIStatusError,
+    AuthenticationError,
+    RateLimitError,
+)
 
 from devagent.providers import ask_llm
 
@@ -29,10 +34,28 @@ def main():
 
     try:
         answer = ask_llm(args.provider, args.prompt)
+
         print(f"\nDevAgent ({args.provider}):\n")
         print(answer)
-    except Exception as error:
-        print(f"Error: {error}")
+
+    except ValueError as error:
+        print(f"Configuration error: {error}")
+        raise SystemExit(1)
+
+    except AuthenticationError:
+        print("Authentication failed. Check your API key.")
+        raise SystemExit(1)
+
+    except RateLimitError:
+        print("Rate limit reached. Check your API usage and limits.")
+        raise SystemExit(1)
+
+    except APIConnectionError:
+        print("Could not connect to the API. Check your internet connection.")
+        raise SystemExit(1)
+
+    except APIStatusError as error:
+        print(f"API error: HTTP {error.status_code}")
         raise SystemExit(1)
 
 
