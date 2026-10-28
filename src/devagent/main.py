@@ -8,8 +8,7 @@ from openai import (
     RateLimitError,
 )
 
-from devagent.providers import ask_llm
-
+from devagent.providers.factory import get_provider
 
 def main():
     load_dotenv()
@@ -33,8 +32,8 @@ def main():
     args = parser.parse_args()
 
     try:
-        answer = ask_llm(args.provider, args.prompt)
-
+        provider = get_provider(args.provider)
+        answer = provider.generate(args.prompt)
         print(f"\nDevAgent ({args.provider}):\n")
         print(answer)
 
